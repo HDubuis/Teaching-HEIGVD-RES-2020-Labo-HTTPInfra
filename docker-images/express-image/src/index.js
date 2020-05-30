@@ -26,8 +26,8 @@ function generateAnimals(){
 	for(var i = 0; i < numberOfAnimals; i++){
 		animals.push({
 			race: chance.animal(),
-			//name: chance.last(),
-			//gender: chance.gender()
+			name: chance.first(),
+			gender: chance.gender()
 		});
 	};
 	
