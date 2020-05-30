@@ -20,7 +20,7 @@ Pour tester l’implémentation il faut :
 2)  Lancer deux containers, si vous faits les étapes précédente contenu dans ce repo. Lancer :
 
           docker run -d --name apache_static res/apache_php
-          docker run -d --name express_dynamic res/express_students
+          docker run -d --name express_dynamic res/express_animals
 
 3)	Avec les commandes :
 
