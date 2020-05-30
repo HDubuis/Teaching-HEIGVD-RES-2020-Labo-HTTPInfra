@@ -8,6 +8,7 @@ Dans cette partie, en suivant le webcast, nous avons commencé par crée l’arb
     COPY content/ /var/www/html/
 
 La première va récupérer l’image php-apache, et la deuxième copie le contenu du dossier content de l’hôte vers le /var/www/html/ du container.
+Les fichiers de configurations d'apache, dans le containers sont situer dans /etc/apache2/
 
 Le thème utiliser vient de https://startbootstrap.com/themes/ et la base du dockerfile de https://hub.docker.com/_/php/ .
 
