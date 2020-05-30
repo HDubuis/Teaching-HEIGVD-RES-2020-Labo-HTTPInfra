@@ -18,7 +18,7 @@ app.listen(3000, function(){
 
 function generateAnimals(){
 	var numberOfAnimals = chance.integer({
-	min: 1,
+	min: 0,
 	max : 5
 	});
 	console.log(numberOfAnimals);
