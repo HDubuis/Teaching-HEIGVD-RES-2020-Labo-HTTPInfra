@@ -35,6 +35,7 @@ Grâce à ce dernier, notre page d'accueil a, désormais, un texte changeant, do
 ###Test 
 Pour tester l’implémentation il faut :
 1)	Cloner le repo
-2)	Lancer le script ./docker-images\express-image\script_docker.sh
-3)  Soit se connecter via telnet au container et lui envoyer `GET / HTTP/1.1`
-Soit alors sur localhost:9090 dans le navigateur.
+2)	Lancer le script ./all.sh
+3)  	Normalement tout les machines ont été crée. Attention, les adresses étant écrite en dur pour le reverse proxy, il pourrait y avoir des soucis. Si c'est le cas, il faut modifier le fichier 001-reverse-proxy.conf du reverse proxy (voir étape 3).
+
+4)	Si vous avez modifier votre fichier host a l'étape précédente vous devrier pouvoir voir le site en fonction ici : http://demo.res.ch:8080/
