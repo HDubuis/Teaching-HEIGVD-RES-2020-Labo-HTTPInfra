@@ -16,4 +16,4 @@ Pour tester l’implémentation il faut :
 1)	Cloner le repo
 2)	Lancer le script ./docker-images\express-image\script_docker.sh
 3)  Soit se connecter via telnet au container et lui envoyer `GET / HTTP/1.1`
-Soit alors sur localhost:9090 dans le navigateur.
+Soit via un navigateur sur localhost:9090.
