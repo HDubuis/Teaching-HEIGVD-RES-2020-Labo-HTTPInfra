@@ -1,2 +1,2 @@
-docker build -t res/apache_php .
-docker run -p 9090:80 res/apache_php
+docker build -t res/express_animals .
+docker run -p 9090:80 res/res/express_animals
