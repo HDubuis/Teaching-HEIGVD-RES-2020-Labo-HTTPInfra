@@ -1,136 +1,203 @@
 # Teaching-HEIGVD-RES-2020-Labo-HTTPInfra
 
-## Objectives
+## Partie 1
 
-The first objective of this lab is to get familiar with software tools that will allow us to build a **complete web infrastructure**. By that, we mean that we will build an environment that will allow us to serve **static and dynamic content** to web browsers. To do that, we will see that the **apache httpd server** can act both as a **HTTP server** and as a **reverse proxy**. We will also see that **express.js** is a JavaScript framework that makes it very easy to write dynamic web apps.
+Dans cette partie, en suivant le webcast, nous avons commencé par créer l’arborescence de notre projet, puis nous avons crée une dockerfile contenant ces deux lignes :
 
-The second objective is to implement a simple, yet complete, **dynamic web application**. We will create **HTML**, **CSS** and **JavaScript** assets that will be served to the browsers and presented to the users. The JavaScript code executed in the browser will issue asynchronous HTTP requests to our web infrastructure (**AJAX requests**) and fetch content generated dynamically.
+    FROM php:7.2-apache
+    COPY content/ /var/www/html/
 
-The third objective is to practice our usage of **Docker**. All the components of the web infrastructure will be packaged in custom Docker images (we will create at least 3 different images).
+La première va récupérer l’image php-apache, et la deuxième copie le contenu du dossier content de l’hôte vers le /var/www/html/ du container.
+Les fichiers de configurations d'apache, dans le container, sont situé dans /etc/apache2/
 
-## General instructions
+Le thème utiliser vient de https://startbootstrap.com/themes/ et la base du dockerfile de https://hub.docker.com/_/php/ .
 
-* This is a **BIG** lab and you will need a lot of time to complete it. 
-* We have prepared webcasts for a big portion of the lab (**what can get you the "base" grade of 4.5**).
-* Be aware that the webcasts have been recorded in 2016. There is no change in the list of tasks to be done, but of course **there are some differences in the details**. For instance, the Docker images that we use to implement the solution have changed a bit and you will need to do **some adjustments to the scripts**. This is part of the work and we ask you to document what the required adaptations in your report.
-* The webcasts present one solution. Feeling adventurous and want to propose another one (for instance, by using nginx instead apache httpd, or django instead of express.js)? Go ahead, we **LOVE** that. Make sure to document your choices in the report. If you are not sure if your choice is compatible with the list of acceptance criteria? Not sure about what needs to be done to get the extra points? Reach out to the teaching team. **Learning to discuss requirements with a "customer"** (even if this one pays you with a grade and not with money) is part of the process!
-* To get **additional points**, you will need to do research in the documentation by yourself (we are here to help, but we will not give you step-by-step instructions!). To get the extra points, you will also need to be creative (do not expect complete guidelines).
-* The lab can be done in **groups of 2 students**. You will learn very important skills and tools, which you will need to next year's courses. You cannot afford to skip this content if you want to survive next year. Essentially, this means that it's a pretty bad idea to only have one person in the group doing the job...
-* Read carefully all the **acceptance criteria**.
-* We will request demos as needed. When you do your **demo**, be prepared to that you can go through the procedure quickly (there are a lot of solutions to evaluate!)
-* **You have to write a report. Please do that directly in the repo, in one or more markdown files. Start in the README.md file at the root of your directory.**
-* The report must contain the procedure that you have followed to prove that your configuration is correct (what you would do if you were doing a demo).
-* Check out the **due dates** on the main repo for the course.
+Pour tester l’implémentation, il faut :
+1) Cloner le repo aller sur la branche fb-apache-static
+2) Lancer le script .\docker-images\apache-php-image\script_docker.sh
+3) Ouvrir un navigateur et allers à l'adresse de docker:9090 (sur Docker Desktop for Windows localhost:9090)
+
+## Partie 2
 
 
-## Step 1: Static HTTP server with apache httpd
+Dans cette partie, en suivant le webcast, nous avons commencé par ajouter des dossiers à l’arborescence de notre projet, puis nous avons crée le dockerfile suivant :
 
-### Webcasts
+    FROM node:12.17
+    COPY src/ /opt/app
+    CMD ["node", "/opt/app/index.js"]
 
-* [Labo HTTP (1): Serveur apache httpd "dockerisé" servant du contenu statique](https://www.youtube.com/watch?v=XFO4OmcfI3U)
+La dernière ligne permet à ce qu'on lance notre application node contenu dans index.js, au lancement du container.
+Ensuite, nous avons écrit une courte application qui génère aléatoirement des animaux grâce au module "chance" puis faisons une fonction grâce au module "express".
 
-### Acceptance criteria
+````
+    var Chance = require('chance');
+    var chance = new Chance();
 
-* You have a GitHub repo with everything needed to build the Docker image.
-* You can do a demo, where you build the image, run a container and access content from a browser.
-* You have used a nice looking web template, different from the one shown in the webcast.
-* You are able to explain what you do in the Dockerfile.
-* You are able to show where the apache config files are located (in a running container).
-* You have **documented** your configuration in your report.
+    var express = require('express');
+    var app = express();
 
-## Step 2: Dynamic HTTP server with express.js
+    app.get('/test', function(req,res){
+        res.send("Hello again - test is working");
+    });
 
-### Webcasts
+    app.get('/', function(req,res){
+        res.send(generateAnimals());
+    });
 
-* [Labo HTTP (2a): Application node "dockerisée"](https://www.youtube.com/watch?v=fSIrZ0Mmpis)
-* [Labo HTTP (2b): Application express "dockerisée"](https://www.youtube.com/watch?v=o4qHbf_vMu0)
+    app.listen(3000, function(){
+        console.log('Accepting HTTP requests on port 3000');
+    });
 
-### Acceptance criteria
+    function generateAnimals(){
+        var numberOfAnimals = chance.integer({
+        min: 1,
+        max : 5
+        });
+        console.log(numberOfAnimals);
+        var animals = [];
+        for(var i = 0; i < numberOfAnimals; i++){
+            animals.push({
+                race: chance.animal(),
+                name: chance.first(),
+                gender: chance.gender()
+            });
+        };
 
-* You have a GitHub repo with everything needed to build the Docker image.
-* You can do a demo, where you build the image, run a container and access content from a browser.
-* You generate dynamic, random content and return a JSON payload to the client.
-* You cannot return the same content as the webcast (you cannot return a list of people).
-* You don't have to use express.js; if you want, you can use another JavaScript web framework or event another language.
-* You have **documented** your configuration in your report.
+        console.log(animals);
+        return animals;
+    }
+````
+
+Pour tester l’implémentation, il faut :
+1) Cloner le repo et aller sur la branche fb-express-dynamic
+2) Lancer le script ./docker-images/express-image/script_docker.sh
+3) Soit se connecter via telnet au container et lui envoyer `GET / HTTP/1.1`, soit à nouveau sur localhost:9090 dans le navigateur. (Si vous utilisez autre chose que Docker Desktop for Windows remplace localhost par celle correspondant à votre Docker)
+
+## Partie 3
+
+Dans cette partie, nous utilisons le dockerfile suivant  :
+
+    FROM php:7.2-apache
+    
+    COPY conf/ /etc/apache2
+    
+    RUN a2enmod proxy proxy_http
+    RUN a2ensite 000-* 001-*
+
+Grâce à ce dernier, nous créons une image php-apache dans laquelle nous allons configurer apache pour faire un reverse proxy. Pour cela, nous avons besoin de copier des fichiers de notre machine au container (via la deuxième ligne). Les fichiers en questions sont 000-default.conf et 001-reverse-proxy.conf, ils permettent (surtout le deuxième) de mapper les requêtes qui sont envoyées à notre serveur.
+Finalement pour que ça fonctionne d'apache afin d'activer la configuration, a2enmod permet d'enable les deux module dont nous avons besoin, et a2ensite, enable nos sites.
 
 
-## Step 3: Reverse proxy with apache (static configuration)
+### Test
+Pour tester l’implémentation il faut :
+1)	Aller sur la branche fb-apache-reverse-proxy
+2)  Lancer deux containers, si vous avez fait les étapes précédentes contenu dans ce repo. Lancer :
 
-### Webcasts
+          docker run -d --name apache_static res/apache_php
+          docker run -d --name express_dynamic res/express_animals
 
-* [Labo HTTP (3a): reverse proxy apache httpd dans Docker](https://www.youtube.com/watch?v=WHFlWdcvZtk)
-* [Labo HTTP (3b): reverse proxy apache httpd dans Docker](https://www.youtube.com/watch?v=fkPwHyQUiVs)
-* [Labo HTTP (3c): reverse proxy apache httpd dans Docker](https://www.youtube.com/watch?v=UmiYS_ObJxY)
+3)	Avec les commandes :
+
+          docker inspect express_dynamic |grep -i ipaddress
+          docker inspect apache_static |grep -i ipaddress
+          
+Récupérer les adresses ip des deux containers ainsi lancés.
+
+4)  Dans le fichier docker-images\apache-reverse_proxy\conf\sites-available\001-reverse-proxy.conf, changer les ip en fonction des résultat obtenus.
+
+5)  Lancer le script ./docker-images/apache-reverse_proxy/script_docker.sh
 
 
-### Acceptance criteria
+/!\Nous avons du hardcoder les adresses dans le fichier 001-reverse-proxy.conf, si les containers sont arrêter et relancer, cela a des bonnes chances de ne pas fonctionner (docker attribue dynamiquement les adresses)
 
-* You have a GitHub repo with everything needed to build the Docker image for the container.
-* You can do a demo, where you start from an "empty" Docker environment (no container running) and where you start 3 containers: static server, dynamic server and reverse proxy; in the demo, you prove that the routing is done correctly by the reverse proxy.
-* You can explain and prove that the static and dynamic servers cannot be reached directly (reverse proxy is a single entry point in the infra). 
-* You are able to explain why the static configuration is fragile and needs to be improved.
-* You have **documented** your configuration in your report.
+## Partie 4
+
+Le but de cette partie était d'utiliser AJAX et JQuery pour modifier dynamiquement le contenu d'une page hébergée dans un de nos containers, derrière le reverse proxy. 
+Toutefois, nous avons commencé par modifier tout nos dockerfile pour y ajouter ceci :
+
+    RUN apt-get update && \
+	apt-get install -y vim
 
 
-## Step 4: AJAX requests with JQuery
+Cela a pour but qu'ils installent vim à leur lancement. 
+Puis nous avons modifié les fichiers de la machine faits à partir de l'image apache_php. Dans le fichier HTML, nous avons ajouté de quoi charger un script de plus, et nous avons écrit le fameux script, dont voici le code :
 
-### Webcasts
+    $(function(){
+    	console.log("Loading animals");
+    	
+    	function loadAnimals(){
+    		$.getJSON( "/api/students/", function( animals ){
+    			console.log(animals);
+    			var message = "It's a quiet place here";
+    			if(animals.length > 0){
+    				message = "Oh look, it's "+animals[0].name+", the "+animals[0].race;
+    			}
+    			$(".masthead-heading").text(message);
+    		});
+    	};
+    	loadAnimals;
+    	setInterval( loadAnimals, 2000);
+    });
 
-* [Labo HTTP (4): AJAX avec JQuery](https://www.youtube.com/watch?v=fgpNEbgdm5k)
+Grâce à ce dernier, notre page d'accueil a, désormais, un texte changeant, dont le contenu vient en partie de notre containers express_dynamic.
 
-### Acceptance criteria
+### Test
 
-* You have a GitHub repo with everything needed to build the various images.
-* You can do a complete, end-to-end demonstration: the web page is dynamically updated every few seconds (with the data coming from the dynamic backend).
-* You are able to prove that AJAX requests are sent by the browser and you can show the content of th responses.
-* You are able to explain why your demo would not work without a reverse proxy (because of a security restriction).
-* You have **documented** your configuration in your report.
+Pour tester l’implémentation, il faut :
+1) Aller sur la branche fb-ajax-jquery
+2) Lancer le script ./all.sh
+3) Normalement, toutes les machines ont été créées. Attention, les adresses étant écrites en dur pour le reverse proxy, il pourrait y avoir des soucis. Si c'est le cas, il faut modifier le fichier 001-reverse-proxy.conf du reverse proxy (voir étape 3).
 
-## Step 5: Dynamic reverse proxy configuration
+4) Si vous avez modifié votre fichier host a l'étape précédente vous devriez pouvoir voir le site en fonction ici : http://demo.res.ch:8080/
 
-### Webcasts
 
-* [Labo HTTP (5a): configuration dynamique du reverse proxy](https://www.youtube.com/watch?v=iGl3Y27AewU)
-* [Labo HTTP (5b): configuration dynamique du reverse proxy](https://www.youtube.com/watch?v=lVWLdB3y-4I)
-* [Labo HTTP (5c): configuration dynamique du reverse proxy](https://www.youtube.com/watch?v=MQj-FzD-0mE)
-* [Labo HTTP (5d): configuration dynamique du reverse proxy](https://www.youtube.com/watch?v=B_JpYtxoO_E)
-* [Labo HTTP (5e): configuration dynamique du reverse proxy](https://www.youtube.com/watch?v=dz6GLoGou9k)
+## Partie 5
 
-### Acceptance criteria
+Dans cette partie, le but est de régler notre problème d'adresse IP inscrite en dur dans notre container qui se charge du reverse proxy. Pour ce faire, nous allons modifier son dockerfile, modifié le ficher apache2_foreground utiliser par l'image que nous utilisons, et écrire un peu de php. Voici le nouveau dockerfile :
 
-* You have a GitHub repo with everything needed to build the various images.
-* You have found a way to replace the static configuration of the reverse proxy (hard-coded IP adresses) with a dynamic configuration.
-* You may use the approach presented in the webcast (environment variables and PHP script executed when the reverse proxy container is started), or you may use another approach. The requirement is that you should not have to rebuild the reverse proxy Docker image when the IP addresses of the servers change.
-* You are able to do an end-to-end demo with a well-prepared scenario. Make sure that you can demonstrate that everything works fine when the IP addresses change!
-* You are able to explain how you have implemented the solution and walk us through the configuration and the code.
-* You have **documented** your configuration in your report.
+    FROM php:7.2-apache
+    
+    RUN apt-get update && apt-get install -y vim
+    
+    COPY apache2-foreground /usr/local/bin
+    COPY templates /var/apache2/templates
+    COPY conf/ /etc/apache2
+    
+    RUN a2enmod proxy proxy_http
+    RUN a2ensite 000-* 001-*
 
-## Additional steps to get extra points on top of the "base" grade
+Nous copions désormais notre fichier apache2-foreground, et notre dossier templates qui contient notre code php.
+Dans apache2-foreground nous avons ajouter
 
-### Load balancing: multiple server nodes (0.5pt)
+    echo "Setup for the RES lab..."
+    echo "Static App URL :"$STATIC_APP
+    echo "Dynamic App URL :"$DYNAMIC_APP
+    
+    php /var/apache2/templates/config-template.php > /etc/apache2/sites-available/001-reverse-proxy.conf
+    
+Les trois échos sont là juste pour nous informer que nos ajouts fonctionne et que nous avons accès aux variable d'environnement STATIC_APP et DYNAMIC_APP, enfin la dernière ligne lance notre code php et écrit son résultat dans le fichier 001-reverse-proxy.conf.
 
-* You extend the reverse proxy configuration to support **load balancing**. 
-* You show that you can have **multiple static server nodes** and **multiple dynamic server nodes**. 
-* You prove that the **load balancer** can distribute HTTP requests between these nodes.
-* You have **documented** your configuration and your validation procedure in your report.
+    <?php
+    	$ip_static = getenv('STATIC_APP');
+    	$ip_dynamic = getenv('DYNAMIC_APP');
+    ?>
+    
+    <VirtualHost *:80>
+    	ServerName demo.res.ch
+    
+    	ProxyPass '/api/students/' 'http://<?php print "$ip_dynamic"?>/'
+    	ProxyPassReverse '/api/students/' 'http://<?php print "$ip_dynamic"?>/'
+    
+    	ProxyPass '/' 'http://<?php print "$ip_static"?>/'
+    	ProxyPassReverse '/' 'http://<?php print "$ip_static"?>/'
+    </VirtualHost>
+    
+Ce code, nous permet de récupérer les variables d'environnement qui nous intéresse, et de les écrire où nous le souhait dans notre fichier de configuration.
+Enfin, grâce à cela, nous pouvons lancer notre reverse proxy, en lui donnant lui passant les adresse ip comme des variable d'environnement.
 
-### Load balancing: round-robin vs sticky sessions (0.5 pt)
-
-* You do a setup to demonstrate the notion of sticky session.
-* You prove that your load balancer can distribute HTTP requests in a round-robin fashion to the dynamic server nodes (because there is no state).
-* You prove that your load balancer can handle sticky sessions when forwarding HTTP requests to the static server nodes.
-* You have documented your configuration and your validation procedure in your report.
-
-### Dynamic cluster management (0.5 pt)
-
-* You develop a solution, where the server nodes (static and dynamic) can appear or disappear at any time.
-* You show that the load balancer is dynamically updated to reflect the state of the cluster.
-* You describe your approach (are you implementing a discovery protocol based on UDP multicast? are you using a tool such as serf?)
-* You have documented your configuration and your validation procedure in your report.
-
-### Management UI (0.5 pt)
-
-* You develop a web app (e.g. with express.js) that administrators can use to monitor and update your web infrastructure. For instance, you use the Dockerode npm module (or another Docker client library, in any of the supported languages).
-* Or you find another way (e.g. an existing tool) to control your Docker environment in a web UI (list containers, start/stop containers, etc. 
-* You have documented your configuration and your validation procedure in your report.
+### Test
+Pour tester l’implémentation il faut :
+1)	Aller sur la branche fb-dynamic-configuration
+2)	Lancer le script ./Static+dynamic.sh
+3) 	Regarder les adresses ip avec `docker  inspect express_dynamic |grep -i ipaddress` et `docker inspect apache_static |grep -i ipaddress`
+4)	Lance `docker run -d -p 8080:80 -e STATIC_APP=adresse ip de apache_static:80 -e DYNAMIC_APP=adresse ip de express_dynamic:3000 --name apache_rp res/apache_rp` (par exemple docker run -d -p 8080:80 -e STATIC_APP=172.17.0.2:80 -e DYNAMIC_APP=172.17.0.4:3000 --name apache_rp res/apache_rp)
