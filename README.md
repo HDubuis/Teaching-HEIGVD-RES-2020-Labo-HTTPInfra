@@ -53,6 +53,6 @@ Ensuite, nous avons écrit une courte application qui génère aléatoirement de
 ````
 
 Pour tester l’implémentation, il faut :
-1) Cloner le repo
+1) Cloner le repo et aller sur la branche fb-express-dynamic
 2) Lancer le script ./docker-images/express-image/script_docker.sh
 3) Soit se connecter via telnet au container et lui envoyer `GET / HTTP/1.1`, soit à nouveau sur localhost:9090 dans le navigateur. (Si vous utilisez autre chose que Docker Desktop for Windows remplace localhost par celle correspondant à votre Docker)
