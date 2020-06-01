@@ -32,10 +32,10 @@ Puis nous avons modifié les fichiers de la machine faits à partir de l'image a
 
 Grâce à ce dernier, notre page d'accueil a, désormais, un texte changeant, dont le contenu vient en partie de notre containers express_dynamic.
 
-###Test
+Test
 
 Pour tester l’implémentation, il faut :
-1) Cloner le repo
+1) Aller sur la branche fb-ajax-jquery
 2) Lancer le script ./all.sh
 3) Normalement, toutes les machines ont été créées. Attention, les adresses étant écrites en dur pour le reverse proxy, il pourrait y avoir des soucis. Si c'est le cas, il faut modifier le fichier 001-reverse-proxy.conf du reverse proxy (voir étape 3).
 
