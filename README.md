@@ -3,7 +3,7 @@
 
 ## Partie 5
 
-Dans cette partie, le but est de règler notre problème d'adresse IP inscrite en dur dans notre container qui se charge du reverse proxy. Pour ce faire, nous allons modifier son dockerfile, modifié le ficher apache2_foreground utiliser par l'image que nous utilisons, et écrire un peu de php. Voici le nouveau dockerfile :
+Dans cette partie, le but est de régler notre problème d'adresse IP inscrite en dur dans notre container qui se charge du reverse proxy. Pour ce faire, nous allons modifier son dockerfile, modifié le ficher apache2_foreground utiliser par l'image que nous utilisons, et écrire un peu de php. Voici le nouveau dockerfile :
 
     FROM php:7.2-apache
     
