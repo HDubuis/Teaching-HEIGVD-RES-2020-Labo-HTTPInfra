@@ -12,12 +12,12 @@ Dans cette partie, nous utilisons le dockerfile suivant  :
     RUN a2enmod proxy proxy_http
     RUN a2ensite 000-* 001-*
 
-Grâce à ce dernier, nous créons une image php-apache dans laquelle nous allons configurer apache pour faire un reverse proxy. Pour cela nous avons besoin de copier des fichier de notre machine au container (via la deuxième ligne). Les fichiers en questions sont 000-default.conf et 001-reverse-proxy.conf, ils permettent (surtout le deuxième) de mapper les requêtes qui sont envoyé à notre serveur.
-Finalement pour que ça fonctionne d'apache afin d'activer la configuration, a2enmod perment d'enable les deux module dont nous avons besoin, et a2ensite, enable nos sites.
+Grâce à ce dernier, nous créons une image php-apache dans laquelle nous allons configurer apache pour faire un reverse proxy. Pour cela, nous avons besoin de copier des fichiers de notre machine au container (via la deuxième ligne). Les fichiers en questions sont 000-default.conf et 001-reverse-proxy.conf, ils permettent (surtout le deuxième) de mapper les requêtes qui sont envoyées à notre serveur.
+Finalement pour que ça fonctionne d'apache afin d'activer la configuration, a2enmod permet d'enable les deux module dont nous avons besoin, et a2ensite, enable nos sites.
 
 Pour tester l’implémentation il faut :
-1)	Cloner le repo
-2)  Lancer deux containers, si vous faits les étapes précédente contenu dans ce repo. Lancer :
+1)	Aller sur la branche fb-apache-reverse-proxy
+2)  Lancer deux containers, si vous avez fait les étapes précédentes contenu dans ce repo. Lancer :
 
           docker run -d --name apache_static res/apache_php
           docker run -d --name express_dynamic res/express_animals
@@ -27,11 +27,11 @@ Pour tester l’implémentation il faut :
           docker inspect express_dynamic |grep -i ipaddress
           docker inspect apache_static |grep -i ipaddress
           
-Récupérer les adresses ip des deux containers ainsi lancer.
+Récupérer les adresses ip des deux containers ainsi lancés.
 
-4)  Dans le fichier 001-reverse-proxy.conf, changer les ip en fonction des résultat obtenus.
+4)  Dans le fichier docker-images\apache-reverse_proxy\conf\sites-available\001-reverse-proxy.conf, changer les ip en fonction des résultat obtenus.
 
-5)  Lancer le script  ./docker-images\apache-reverse_proxy\script_docker.sh
+5)  Lancer le script ./docker-images/apache-reverse_proxy/script_docker.sh
 
 
 /!\Nous avons du hardcoder les adresses dans le fichier 001-reverse-proxy.conf, si les containers sont arrêter et relancer, cela a des bonnes chances de ne pas fonctionner (docker attribue dynamiquement les adresses)
