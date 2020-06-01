@@ -13,6 +13,6 @@ Les fichiers de configurations d'apache, dans le container, sont situé dans /et
 Le thème utiliser vient de https://startbootstrap.com/themes/ et la base du dockerfile de https://hub.docker.com/_/php/ .
 
 Pour tester l’implémentation, il faut :
-1) Cloner le repo
+1) Cloner le repo aller sur la branche fb-apache-static
 2) Lancer le script .\docker-images\apache-php-image\script_docker.sh
 3) Ouvrir un navigateur et allers à l'adresse de docker:9090 (sur Docker Desktop for Windows localhost:9090)
