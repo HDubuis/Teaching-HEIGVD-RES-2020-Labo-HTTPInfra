@@ -47,7 +47,7 @@ Enfin, grâce à cela, nous pouvons lancer notre reverse proxy, en lui donnant l
 
 ###Test 
 Pour tester l’implémentation il faut :
-1)	Cloner le repo
+1)	Aller sur la branche fb-dynamic-configuration
 2)	Lancer le script ./Static+dynamic.sh
 3) 	Regarder les adresses ip avec `docker  inspect express_dynamic |grep -i ipaddress` et `docker inspect apache_static |grep -i ipaddress`
 4)	Lance `docker run -d -p 8080:80 -e STATIC_APP=adresse ip de apache_static:80 -e DYNAMIC_APP=adresse ip de express_dynamic:3000 --name apache_rp res/apache_rp` (par exemple docker run -d -p 8080:80 -e STATIC_APP=172.17.0.2:80 -e DYNAMIC_APP=172.17.0.4:3000 --name apache_rp res/apache_rp)
