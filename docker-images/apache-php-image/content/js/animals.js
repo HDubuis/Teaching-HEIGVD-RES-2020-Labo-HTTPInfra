@@ -2,7 +2,7 @@ $(function(){
 	console.log("Loading animals");
 	
 	function loadAnimals(){
-		$.getJSON( "/api/students/", function( animals ){
+		$.getJSON( "/api/animals/", function( animals ){
 			console.log(animals);
 			var message = "It's a quiet place here";
 			if(animals.length > 0){

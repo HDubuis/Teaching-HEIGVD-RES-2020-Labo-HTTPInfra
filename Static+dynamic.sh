@@ -14,6 +14,9 @@ cd ..
 cd ./express-image
 bash ./build_image.sh
 
+cd ..
+cd ./docker-images/apache-reverse-proxy/
+bash ./build_image.sh
 
 # On lance les trois containers
 docker run -d --name apache_static res/apache_php
