@@ -15,6 +15,8 @@ Dans cette partie, nous utilisons le dockerfile suivant  :
 Grâce à ce dernier, nous créons une image php-apache dans laquelle nous allons configurer apache pour faire un reverse proxy. Pour cela, nous avons besoin de copier des fichiers de notre machine au container (via la deuxième ligne). Les fichiers en questions sont 000-default.conf et 001-reverse-proxy.conf, ils permettent (surtout le deuxième) de mapper les requêtes qui sont envoyées à notre serveur.
 Finalement pour que ça fonctionne d'apache afin d'activer la configuration, a2enmod permet d'enable les deux module dont nous avons besoin, et a2ensite, enable nos sites.
 
+
+### Test
 Pour tester l’implémentation il faut :
 1)	Aller sur la branche fb-apache-reverse-proxy
 2)  Lancer deux containers, si vous avez fait les étapes précédentes contenu dans ce repo. Lancer :
