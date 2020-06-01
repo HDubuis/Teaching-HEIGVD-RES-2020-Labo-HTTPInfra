@@ -45,7 +45,7 @@ Les trois échos sont là juste pour nous informer que nos ajouts fonctionne et 
 Ce code, nous permet de récupérer les variables d'environnement qui nous intéresse, et de les écrire où nous le souhait dans notre fichier de configuration.
 Enfin, grâce à cela, nous pouvons lancer notre reverse proxy, en lui donnant lui passant les adresse ip comme des variable d'environnement.
 
-###Test 
+### Test 
 Pour tester l’implémentation il faut :
 1)	Aller sur la branche fb-dynamic-configuration
 2)	Lancer le script ./Static+dynamic.sh
