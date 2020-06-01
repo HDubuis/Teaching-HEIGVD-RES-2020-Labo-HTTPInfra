@@ -1,40 +1,53 @@
 
 # Teaching-HEIGVD-RES-2020-Labo-HTTPInfra
 
-## Partie 4
+## Partie 5
 
-Le but de cette partie était d'utiliser AJAX et JQuery pour modifier dynamiquement le contenu d'une page herberger dans un de nos containers, derrière le reverse proxy. 
-Toutefois nous avons commencer par modifier tout nos dockerfile pour y ajouter ceci :
+Dans cette partie, le but est de règler notre problème d'adresse IP inscrite en dur dans notre container qui se charge du reverse proxy. Pour ce faire, nous allons modifier son dockerfile, modifié le ficher apache2_foreground utiliser par l'image que nous utilisons, et écrire un peu de php. Voici le nouveau dockerfile :
 
-    RUN apt-get update && \
-	apt-get install -y vim
+    FROM php:7.2-apache
+    
+    RUN apt-get update && apt-get install -y vim
+    
+    COPY apache2-foreground /usr/local/bin
+    COPY templates /var/apache2/templates
+    COPY conf/ /etc/apache2
+    
+    RUN a2enmod proxy proxy_http
+    RUN a2ensite 000-* 001-*
 
+Nous copions désormais notre fichier apache2-foreground, et notre dossier templates qui contient notre code php.
+Dans apache2-foreground nous avons ajouter
 
-Cela a pour but qu'ils installent vim à leur lancement. 
-Puis nous avons modifier les fichiers de la machine fait à partir de l'image apache_php. Dans le fichier HTML, nous avons ajouté de quoi charger un script de plus, et nous avons écrit le fameux script, dont voici le code :
+    echo "Setup for the RES lab..."
+    echo "Static App URL :"$STATIC_APP
+    echo "Dynamic App URL :"$DYNAMIC_APP
+    
+    php /var/apache2/templates/config-template.php > /etc/apache2/sites-available/001-reverse-proxy.conf
+    
+Les trois échos sont là juste pour nous informer que nos ajouts fonctionne et que nous avons accès aux variable d'environnement STATIC_APP et DYNAMIC_APP, enfin la dernière ligne lance notre code php et écrit son résultat dans le fichier 001-reverse-proxy.conf.
 
-    $(function(){
-    	console.log("Loading animals");
-    	
-    	function loadAnimals(){
-    		$.getJSON( "/api/students/", function( animals ){
-    			console.log(animals);
-    			var message = "It's a quiet place here";
-    			if(animals.length > 0){
-    				message = "Oh look, it's "+animals[0].name+", the "+animals[0].race;
-    			}
-    			$(".masthead-heading").text(message);
-    		});
-    	};
-    	loadAnimals;
-    	setInterval( loadAnimals, 2000);
-    });
-
-Grâce à ce dernier, notre page d'accueil a, désormais, un texte changeant, dont le contenu vient en partie de notre containers express_dynamic.
+    <?php
+    	$ip_static = getenv('STATIC_APP');
+    	$ip_dynamic = getenv('DYNAMIC_APP');
+    ?>
+    
+    <VirtualHost *:80>
+    	ServerName demo.res.ch
+    
+    	ProxyPass '/api/students/' 'http://<?php print "$ip_dynamic"?>/'
+    	ProxyPassReverse '/api/students/' 'http://<?php print "$ip_dynamic"?>/'
+    
+    	ProxyPass '/' 'http://<?php print "$ip_static"?>/'
+    	ProxyPassReverse '/' 'http://<?php print "$ip_static"?>/'
+    </VirtualHost>
+    
+Ce code, nous permet de récupérer les variables d'environnement qui nous intéresse, et de les écrire où nous le souhait dans notre fichier de configuration.
+Enfin, grâce à cela, nous pouvons lancer notre reverse proxy, en lui donnant lui passant les adresse ip comme des variable d'environnement.
 
 ###Test 
 Pour tester l’implémentation il faut :
 1)	Cloner le repo
-2)	Lancer le script ./docker-images\express-image\script_docker.sh
-3)  Soit se connecter via telnet au container et lui envoyer `GET / HTTP/1.1`
-Soit alors sur localhost:9090 dans le navigateur.
+2)	Lancer le script ./Static+dynamic.sh
+3) 	Regarder les adresses ip avec `docker  inspect express_dynamic |grep -i ipaddress` et `docker inspect apache_static |grep -i ipaddress`
+4)	Lance `docker run -d -p 8080:80 -e STATIC_APP=adresse ip de apache_static:80 -e DYNAMIC_APP=adresse ip de express_dynamic:3000 --name apache_rp res/apache_rp` (par exemple docker run -d -p 8080:80 -e STATIC_APP=172.17.0.2:80 -e DYNAMIC_APP=172.17.0.4:3000 --name apache_rp res/apache_rp)
