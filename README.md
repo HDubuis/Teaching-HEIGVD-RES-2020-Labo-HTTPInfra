@@ -32,7 +32,7 @@ Puis nous avons modifié les fichiers de la machine faits à partir de l'image a
 
 Grâce à ce dernier, notre page d'accueil a, désormais, un texte changeant, dont le contenu vient en partie de notre containers express_dynamic.
 
-Test
+### Test
 
 Pour tester l’implémentation, il faut :
 1) Aller sur la branche fb-ajax-jquery
